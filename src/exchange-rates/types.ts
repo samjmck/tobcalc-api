@@ -8,6 +8,6 @@ export interface ExchangeRateProvider {
   getExchangeRates(
     from: string,
     start: Temporal.PlainDate,
-    end: Temporal.PlainDate
+    end: Temporal.PlainDate,
   ): Promise<ExchangeRate[]>;
 }

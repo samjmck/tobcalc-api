@@ -10,7 +10,7 @@ const DEFAULT_BACKOFF_DELAY_MS = 1000;
 
 export async function fetchWithRetry(
   url: string,
-  options: FetchOptions = {}
+  options: FetchOptions = {},
 ): Promise<Response> {
   const maxRetries = options.maxRetries ?? DEFAULT_MAX_RETRIES;
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
@@ -33,7 +33,7 @@ export async function fetchWithRetry(
       return response;
     } catch (error) {
       clearTimeout(
-        setTimeout(() => {}, 0)
+        setTimeout(() => {}, 0),
       );
       lastError = error instanceof Error ? error : new Error(String(error));
 

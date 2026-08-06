@@ -1,7 +1,7 @@
 export type Security = StockSecurity | FundSecurity | OtherSecurity;
 
 export type StockSecurity = {
-  type: 'stock';
+  type: "stock";
   name: string;
   isin: string;
   exchanges: string[];
@@ -9,27 +9,27 @@ export type StockSecurity = {
 };
 
 export type FundSecurity = {
-  type: 'fund';
+  type: "fund";
   name: string;
   isin: string;
-  distributionType: 'accumulating' | 'distributing';
+  distributionType: "accumulating" | "distributing";
   exchanges: string[];
   tickers: string[];
 };
 
 export type OtherSecurity = {
-  type: 'other';
+  type: "other";
   name: string;
   isin: string;
   exchanges: string[];
   tickers: string[];
 };
 
-export type SecuritySearchType = 'isin' | 'ticker' | 'name';
+export type SecuritySearchType = "isin" | "ticker" | "name";
 
 export interface SecurityProvider {
   searchSecurities(
     query: string,
-    type?: SecuritySearchType
+    type?: SecuritySearchType,
   ): Promise<Security[]>;
 }
