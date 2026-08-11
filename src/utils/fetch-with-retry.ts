@@ -1,7 +1,9 @@
-export interface FetchOptions {
-  maxRetries?: number;
-  timeoutMs?: number;
-  backoffDelayMs?: number;
+export interface FetchOptions extends RequestInit {
+  retryOptions?: {
+    maxRetries?: number;
+    timeoutMs?: number;
+    backoffDelayMs?: number;
+  };
 }
 
 const DEFAULT_MAX_RETRIES = 2;
@@ -10,11 +12,12 @@ const DEFAULT_BACKOFF_DELAY_MS = 1000;
 
 export async function fetchWithRetry(
   url: string,
-  options: FetchOptions = {},
+  init?: FetchOptions,
 ): Promise<Response> {
-  const maxRetries = options.maxRetries ?? DEFAULT_MAX_RETRIES;
-  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-  const backoffDelayMs = options.backoffDelayMs ?? DEFAULT_BACKOFF_DELAY_MS;
+  const maxRetries = init?.retryOptions?.maxRetries ?? DEFAULT_MAX_RETRIES;
+  const timeoutMs = init?.retryOptions?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const backoffDelayMs = init?.retryOptions?.backoffDelayMs ??
+    DEFAULT_BACKOFF_DELAY_MS;
 
   let lastError: Error | null = null;
 
@@ -23,7 +26,10 @@ export async function fetchWithRetry(
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-      const response = await fetch(url, { signal: controller.signal });
+      const response = await fetch(url, {
+        ...init,
+        signal: controller.signal,
+      });
       clearTimeout(timeoutId);
 
       if (!response.ok) {
