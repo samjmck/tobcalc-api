@@ -1,7 +1,7 @@
 import { Security, SecurityProvider } from "./types.ts";
 import { fetchWithRetry } from "../utils/fetch-with-retry.ts";
 
-interface YahooFinanceQuote {
+export interface YahooFinanceQuote {
   exchange: string;
   shortname?: string;
   quoteType: string;
@@ -12,9 +12,31 @@ interface YahooFinanceQuote {
   isYahooFinance: boolean;
 }
 
-interface YahooFinanceResponse {
+export interface YahooFinanceResponse {
   quotes: YahooFinanceQuote[];
   count: number;
+}
+
+/**
+ * Parse Yahoo Finance response and extract the first quote if available
+ */
+export function parseYahooFinanceResponse(
+  response: YahooFinanceResponse,
+): YahooFinanceQuote | null {
+  if (!response.quotes || response.quotes.length === 0) {
+    return null;
+  }
+  return response.quotes[0];
+}
+
+/**
+ * Parse justETF HTML response and determine distribution type
+ */
+export function parseJustETFDistributionType(html: string): "accumulating" | "distributing" {
+  const accumulatingPattern =
+    /<td class="val" data-testid="tl_etf-basics_value_distribution-policy">Accumulating<\/td>/g;
+  const isAccumulating = accumulatingPattern.test(html);
+  return isAccumulating ? "accumulating" : "distributing";
 }
 
 export class YahooFinanceJustETFSecurityProvider implements SecurityProvider {
@@ -138,11 +160,6 @@ export class YahooFinanceJustETFSecurityProvider implements SecurityProvider {
     });
 
     const html = await response.text();
-
-    const accumulatingPattern =
-      /<td class="val" data-testid="tl_etf-basics_value_distribution-policy">Accumulating<\/td>/g;
-    const isAccumulating = accumulatingPattern.test(html);
-
-    return isAccumulating ? "accumulating" : "distributing";
+    return parseJustETFDistributionType(html);
   }
 }
