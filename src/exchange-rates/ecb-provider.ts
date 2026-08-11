@@ -29,9 +29,11 @@ export class ECBExchangeRateProvider implements ExchangeRateProvider {
     let response: Response;
     try {
       response = await fetchWithRetry(url, {
-        maxRetries: 2,
-        timeoutMs: 5000,
-        backoffDelayMs: 1000,
+        retryOptions: {
+          maxRetries: 2,
+          timeoutMs: 5000,
+          backoffDelayMs: 1000,
+        },
       });
     } catch (error) {
       throw new InternalServerError(
