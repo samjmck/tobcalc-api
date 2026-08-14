@@ -3,6 +3,7 @@ import { fetchWithRetry } from "../utils/fetch-with-retry.ts";
 
 const ECB_API_BASE = "https://data-api.ecb.europa.eu/service/data/EXR";
 const MAX_DAYS = 1825; // 5 years
+const START_BUFFER_DAYS = 7;
 
 export class ECBExchangeRateProvider implements ExchangeRateProvider {
   async getExchangeRates(
@@ -18,12 +19,13 @@ export class ECBExchangeRateProvider implements ExchangeRateProvider {
       );
     }
 
-    // Build series key and URL
+    // Fetch with 7-day buffer to ensure backfill data is available for start date
+    const bufferStart = start.subtract({ days: START_BUFFER_DAYS });
     const seriesKey = `D.${from}.EUR.SP00.A`;
-    const startStr = start.toString();
+    const bufferStartStr = bufferStart.toString();
     const endStr = end.toString();
     const url =
-      `${ECB_API_BASE}/${seriesKey}?startPeriod=${startStr}&endPeriod=${endStr}&format=csvdata`;
+      `${ECB_API_BASE}/${seriesKey}?startPeriod=${bufferStartStr}&endPeriod=${endStr}&format=csvdata`;
 
     // Fetch data from ECB
     let response: Response;
@@ -113,6 +115,22 @@ export function fillCalendarDays(
   const result: ExchangeRate[] = [];
   let currentDate = start;
   let lastRate: number | null = null;
+
+  // Initialize lastRate from the most recent trading day before start
+  let searchDate = start.subtract({ days: 1 });
+  while (
+    Temporal.PlainDate.compare(
+      searchDate,
+      start.subtract({ days: START_BUFFER_DAYS + 1 }),
+    ) >= 0
+  ) {
+    const rate = ratesByDate.get(searchDate.toString());
+    if (rate !== undefined) {
+      lastRate = rate;
+      break;
+    }
+    searchDate = searchDate.subtract({ days: 1 });
+  }
 
   while (Temporal.PlainDate.compare(currentDate, end) <= 0) {
     const dateStr = currentDate.toString();
