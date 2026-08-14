@@ -32,10 +32,6 @@ export async function fetchWithRetry(
       });
       clearTimeout(timeoutId);
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
       return response;
     } catch (error) {
       clearTimeout(
