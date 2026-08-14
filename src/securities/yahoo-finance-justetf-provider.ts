@@ -38,7 +38,9 @@ export function parseYahooFinanceResponse(
 /**
  * Parse justETF HTML response and determine distribution type
  */
-export function parseJustETFDistributionType(html: string): "accumulating" | "distributing" {
+export function parseJustETFDistributionType(
+  html: string,
+): "accumulating" | "distributing" {
   const accumulatingPattern =
     /<td class="val" data-testid="tl_etf-basics_value_distribution-policy">Accumulating<\/td>/g;
   const isAccumulating = accumulatingPattern.test(html);
