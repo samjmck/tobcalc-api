@@ -16,8 +16,8 @@ jobs:
           deno-version: 2.9.1
       - name: Check formatting
         run: deno fmt src/**/* --check
-      - name: Run tests
-        run: deno test --allow-read --allow-env src/**/*_test.ts --filter "!E2E"
+      - name: Run unit and integration tests
+        run: deno test --allow-read --allow-env src/**/*_test.ts src/**/*_integration_test.ts
 
   test-e2e:
     runs-on: ubuntu-latest
@@ -27,5 +27,5 @@ jobs:
         with:
           deno-version: 2.9.1
       - name: Run E2E tests
-        run: LIVE_ENDPOINTS=true deno test --allow-read --allow-env --allow-net src/**/*_test.ts --filter "E2E"
+        run: LIVE_ENDPOINTS=true deno test --allow-read --allow-env --allow-net src/**/*_e2e_test.ts
         continue-on-error: true
