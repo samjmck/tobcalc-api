@@ -51,7 +51,7 @@ export class YahooFinanceJustETFSecurityProvider implements SecurityProvider {
    * - If ISIN is not found on Yahoo Finance, return null
    * - If ISIN is identified as ETF on Yahoo Finance but not found on justETF, throw error (unexpected)
    */
-  async searchSecurities(isin: string): Promise<Security | null> {
+  async searchSecurity(isin: string): Promise<Security | null> {
     const yahooQuotes = await this.queryYahooFinance(isin);
 
     if (yahooQuotes.length === 0) {

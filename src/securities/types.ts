@@ -23,5 +23,5 @@ export type OtherSecurity = {
 };
 
 export interface SecurityProvider {
-  searchSecurities(isin: string): Promise<Security | null>;
+  searchSecurity(isin: string): Promise<Security | null>;
 }
