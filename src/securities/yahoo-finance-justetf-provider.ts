@@ -1,6 +1,12 @@
 import { Security, SecurityProvider } from "./types.ts";
 import { fetchWithRetry } from "../utils/fetch-with-retry.ts";
 
+export const httpClient = {
+  async fetch(url: string, init?: RequestInit): Promise<Response> {
+    return fetchWithRetry(url, init);
+  },
+};
+
 export interface YahooFinanceQuote {
   exchange: string;
   shortname?: string;
@@ -125,7 +131,7 @@ export class YahooFinanceJustETFSecurityProvider implements SecurityProvider {
     url.searchParams.append("enableCccBoost", "true");
     url.searchParams.append("enablePrivateCompany", "true");
 
-    const response = await fetchWithRetry(url.toString(), {
+    const response = await httpClient.fetch(url.toString(), {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -155,7 +161,7 @@ export class YahooFinanceJustETFSecurityProvider implements SecurityProvider {
       encodeURIComponent(isin)
     }`;
 
-    const response = await fetchWithRetry(url, {
+    const response = await httpClient.fetch(url, {
       method: "GET",
     });
 
