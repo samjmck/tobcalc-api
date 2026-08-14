@@ -24,6 +24,19 @@ async function withMockedHttpClient(
   }
 }
 
+/**
+ * Create a mock fetch function that returns responses sequentially
+ * Encapsulates call count state internally
+ */
+function createSequentialMockFetch(
+  responses: Response[],
+): (url: string, init?: RequestInit) => Promise<Response> {
+  let callCount = 0;
+  return async () => {
+    return responses[callCount++];
+  };
+}
+
 function mockResponse(body: string, status = 200): Response {
   return new Response(body, { status });
 }
@@ -97,18 +110,11 @@ Deno.test("searchSecurity - stock found", async () => {
 });
 
 Deno.test("searchSecurity - ETF accumulating found", async () => {
-  let callCount = 0;
-
   await withMockedHttpClient(
-    async (url: string) => {
-      callCount++;
-      // First call is Yahoo Finance, second call is justETF
-      if (callCount === 1) {
-        return mockResponse(JSON.stringify(yahooFinanceETFResponse()));
-      } else {
-        return mockResponse(justETFAccumulatingHTML());
-      }
-    },
+    createSequentialMockFetch([
+      mockResponse(JSON.stringify(yahooFinanceETFResponse())),
+      mockResponse(justETFAccumulatingHTML()),
+    ]),
     async () => {
       const result = await provider.searchSecurity("IE00B4L5Y983");
 
@@ -122,17 +128,11 @@ Deno.test("searchSecurity - ETF accumulating found", async () => {
 });
 
 Deno.test("searchSecurity - ETF distributing found", async () => {
-  let callCount = 0;
-
   await withMockedHttpClient(
-    async (url: string) => {
-      callCount++;
-      if (callCount === 1) {
-        return mockResponse(JSON.stringify(yahooFinanceETFResponse()));
-      } else {
-        return mockResponse(justETFDistributingHTML());
-      }
-    },
+    createSequentialMockFetch([
+      mockResponse(JSON.stringify(yahooFinanceETFResponse())),
+      mockResponse(justETFDistributingHTML()),
+    ]),
     async () => {
       const result = await provider.searchSecurity("IE00B4L5Y983");
 
@@ -170,17 +170,20 @@ Deno.test("searchSecurity - network error throws", async () => {
 });
 
 Deno.test("searchSecurity - justETF error throws", async () => {
-  let callCount = 0;
-
-  await withMockedHttpClient(
-    async (url: string) => {
+  const errorThrowingMockFetch = (() => {
+    let callCount = 0;
+    return async () => {
       callCount++;
       if (callCount === 1) {
         return mockResponse(JSON.stringify(yahooFinanceETFResponse()));
       } else {
         throw new Error("justETF API error");
       }
-    },
+    };
+  })();
+
+  await withMockedHttpClient(
+    errorThrowingMockFetch,
     async () => {
       try {
         await provider.searchSecurity("IE00B4L5Y983");
