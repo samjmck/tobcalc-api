@@ -11,15 +11,14 @@ Currently, the required information to be able to determine the TOB is:
 
 ### Security endpoint
 
-**`GET /v1/security?query=<value>&type=<type>`**
+**`GET /v1/security/:isin`**
 
-Fetch security metadata by value such as ISIN or security name.
+Fetch security metadata by ISIN. The response includes the security type (stock, fund/ETF, or other) and additional details such as listing exchanges, tickers, and for ETFs, the distribution type (accumulating or distributing).
 
-**Query parameters:**
-- `query` (required): The identifier to search for (ISIN, ticker symbol, or security name)
-- `type` (optional): Hint for the query type. One of: `isin`, `ticker`, `name`.
+**Path parameters:**
+- `isin` (required): The ISIN of the security (e.g., `IE00B4L5Y983`)
 
-**Response:** Array of matching securities. Each security is a discriminated union with a `type` field:
+**Response:** A single security object. Each security is a discriminated union with a `type` field:
 
 ```typescript
 type Security = StockSecurity | FundSecurity | OtherSecurity
@@ -27,7 +26,6 @@ type Security = StockSecurity | FundSecurity | OtherSecurity
 type StockSecurity = {
   type: "stock"
   name: string
-  isin: string
   exchanges: string[]
   tickers: string[]
 }
@@ -35,8 +33,7 @@ type StockSecurity = {
 type FundSecurity = {
   type: "fund"
   name: string
-  isin: string
-  distribution_type: "accumulating" | "distributing"
+  distributionType: "accumulating" | "distributing"
   exchanges: string[]
   tickers: string[]
 }
@@ -44,14 +41,14 @@ type FundSecurity = {
 type OtherSecurity = {
   type: "other"
   name: string
-  isin: string
   exchanges: string[]
   tickers: string[]
 }
 ```
 
 **Error handling:**
-- No matches found: `200 OK` with empty array `[]`
+- ISIN not found: `404 Not Found`
+- Unable to fetch security details (network error, external API failure): `500 Internal Server Error`
 
 ### Exchange rates endpoint
 
