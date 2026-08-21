@@ -78,3 +78,25 @@ type ExchangeRate = {
 - Currency pair not available: `404 Not Found`
 - Date range exceeds 5 years: `400 Bad Request`
 - Data unavailable or stale: `500 Internal Server Error`
+
+## Testing strategy
+
+We have 3 layers of tests, with each layer achieving a different goal:
+
+1. **Unit tests ending in `_test.ts`.** Ensures the parsing logic for the different responses are correct.
+2. **Integration tests ending in `_integration_test.ts`.** These test the full flow of the service functions, including error handling and different response states. `fetch` calls are mocked in these tests. 
+3. **End-to-end tests ending in `_e2e_test.ts`.** Test the services against live endpoints to check that the endpoints are still live and that the responses are in the expected format. _These tests should only be run in a local developer environment, since in a CI pipeline the requests are likely to be blocked anyway._
+
+If you're running the tests locally, use:
+
+```bash
+LIVE_ENDPOINTS=true deno test --allow-env --allow-net src/**/*_test.ts
+```
+
+The `LIVE_ENDPOINTS=true` environment variable ensures the end-to-end tests also get run.
+
+If you're configuring a CI environment to run the tests, you can try the above command first. If you experience network issues due to e.g. Yahoo Finance blocking your requests, run it without the environment variable:
+
+```bash
+deno test --allow-env --allow-net src/**/*_test.ts
+```
