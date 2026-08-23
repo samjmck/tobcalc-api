@@ -1,5 +1,6 @@
 {
   "imports": {
-    "@std/assert": "jsr:@std/assert@1"
+    "@std/assert": "jsr:@std/assert@1",
+    "hono": "npm:hono@^4.13.3"
   }
 }
