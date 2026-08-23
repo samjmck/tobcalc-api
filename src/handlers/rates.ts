@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { Temporal } from "npm:temporal-polyfill";
 import type { ExchangeRateProvider } from "../exchange-rates/types.ts";
 
 export function createRatesHandler(
@@ -57,7 +56,10 @@ export function createRatesHandler(
       const message = error instanceof Error
         ? error.message
         : "Unknown error occurred";
-      return c.json({ error: `Failed to fetch exchange rates: ${message}` }, 500);
+      return c.json(
+        { error: `Failed to fetch exchange rates: ${message}` },
+        500,
+      );
     }
   });
 }

@@ -1,5 +1,4 @@
 import { assertEquals } from "@std/assert";
-import { Temporal } from "npm:temporal-polyfill";
 import { Hono } from "hono";
 import { createRatesHandler } from "./rates.ts";
 import type { ExchangeRateProvider } from "../exchange-rates/types.ts";
