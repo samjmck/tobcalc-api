@@ -38,7 +38,7 @@ Deno.test("security found", async () => {
   });
 
   const response = await app.fetch(
-    new Request("http://localhost/v1/security/US0378331005"),
+    new Request("http://localhost/security/US0378331005"),
   );
 
   assertEquals(response.status, 200);
@@ -59,7 +59,7 @@ Deno.test("fund found", async () => {
   });
 
   const response = await app.fetch(
-    new Request("http://localhost/v1/security/IE00B4L5Y983"),
+    new Request("http://localhost/security/IE00B4L5Y983"),
   );
 
   assertEquals(response.status, 200);
@@ -73,7 +73,7 @@ Deno.test("security not found", async () => {
   mockProvider.setSecurity(null);
 
   const response = await app.fetch(
-    new Request("http://localhost/v1/security/INVALID000000"),
+    new Request("http://localhost/security/INVALID000000"),
   );
 
   assertEquals(response.status, 404);
@@ -85,7 +85,7 @@ Deno.test("provider throws error", async () => {
   mockProvider.setError(new Error("External API error"));
 
   const response = await app.fetch(
-    new Request("http://localhost/v1/security/IE00B4L5Y983"),
+    new Request("http://localhost/security/IE00B4L5Y983"),
   );
 
   assertEquals(response.status, 500);
@@ -105,7 +105,7 @@ Deno.test("other security type", async () => {
   });
 
   const response = await app.fetch(
-    new Request("http://localhost/v1/security/SOMEISIN123456"),
+    new Request("http://localhost/security/SOMEISIN123456"),
   );
 
   assertEquals(response.status, 200);

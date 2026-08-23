@@ -35,7 +35,7 @@ createRatesHandler(app, mockProvider);
 
 Deno.test("missing query parameters", async () => {
   const response = await app.fetch(
-    new Request("http://localhost/v1/rates"),
+    new Request("http://localhost/rates"),
   );
 
   assertEquals(response.status, 400);
@@ -48,7 +48,7 @@ Deno.test("missing query parameters", async () => {
 
 Deno.test("missing from parameter", async () => {
   const response = await app.fetch(
-    new Request("http://localhost/v1/rates?start=2024-01-01&end=2024-12-31"),
+    new Request("http://localhost/rates?start=2024-01-01&end=2024-12-31"),
   );
 
   assertEquals(response.status, 400);
@@ -61,7 +61,7 @@ Deno.test("missing from parameter", async () => {
 
 Deno.test("missing start parameter", async () => {
   const response = await app.fetch(
-    new Request("http://localhost/v1/rates?from=USD&end=2024-12-31"),
+    new Request("http://localhost/rates?from=USD&end=2024-12-31"),
   );
 
   assertEquals(response.status, 400);
@@ -74,7 +74,7 @@ Deno.test("missing start parameter", async () => {
 
 Deno.test("missing end parameter", async () => {
   const response = await app.fetch(
-    new Request("http://localhost/v1/rates?from=USD&start=2024-01-01"),
+    new Request("http://localhost/rates?from=USD&start=2024-01-01"),
   );
 
   assertEquals(response.status, 400);
@@ -88,7 +88,7 @@ Deno.test("missing end parameter", async () => {
 Deno.test("invalid date format for start", async () => {
   const response = await app.fetch(
     new Request(
-      "http://localhost/v1/rates?from=USD&start=invalid-date&end=2024-12-31",
+      "http://localhost/rates?from=USD&start=invalid-date&end=2024-12-31",
     ),
   );
 
@@ -100,7 +100,7 @@ Deno.test("invalid date format for start", async () => {
 Deno.test("invalid date format for end", async () => {
   const response = await app.fetch(
     new Request(
-      "http://localhost/v1/rates?from=USD&start=2024-01-01&end=invalid-date",
+      "http://localhost/rates?from=USD&start=2024-01-01&end=invalid-date",
     ),
   );
 
@@ -116,7 +116,7 @@ Deno.test("date range exceeds maximum", async () => {
 
   const response = await app.fetch(
     new Request(
-      "http://localhost/v1/rates?from=USD&start=2020-01-01&end=2030-12-31",
+      "http://localhost/rates?from=USD&start=2020-01-01&end=2030-12-31",
     ),
   );
 
@@ -132,7 +132,7 @@ Deno.test("currency not found", async () => {
 
   const response = await app.fetch(
     new Request(
-      "http://localhost/v1/rates?from=INVALID&start=2024-01-01&end=2024-12-31",
+      "http://localhost/rates?from=INVALID&start=2024-01-01&end=2024-12-31",
     ),
   );
 
@@ -163,7 +163,7 @@ Deno.test("successful request returns exchange rates", async () => {
 
   const response = await app.fetch(
     new Request(
-      "http://localhost/v1/rates?from=USD&start=2024-01-01&end=2024-01-03",
+      "http://localhost/rates?from=USD&start=2024-01-01&end=2024-01-03",
     ),
   );
 
@@ -186,7 +186,7 @@ Deno.test("provider throws generic error", async () => {
 
   const response = await app.fetch(
     new Request(
-      "http://localhost/v1/rates?from=USD&start=2024-01-01&end=2024-12-31",
+      "http://localhost/rates?from=USD&start=2024-01-01&end=2024-12-31",
     ),
   );
 

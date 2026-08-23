@@ -5,7 +5,7 @@ export function createRatesHandler(
   app: Hono,
   exchangeRateProvider: ExchangeRateProvider,
 ): void {
-  app.get("/v1/rates", async (c) => {
+  app.get("/rates", async (c) => {
     const { from, start, end } = c.req.query();
 
     if (!from || !start || !end) {

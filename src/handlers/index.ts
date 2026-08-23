@@ -10,7 +10,7 @@ export function createApp(
   exchangeRateProvider: ExchangeRateProvider,
   securityProvider: SecurityProvider,
 ) {
-  const app = new Hono();
+  const app = new Hono().basePath("/v1");
   createRatesHandler(app, exchangeRateProvider);
   createSecurityHandler(app, securityProvider);
   return app;

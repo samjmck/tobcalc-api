@@ -5,7 +5,7 @@ export function createSecurityHandler(
   app: Hono,
   securityProvider: SecurityProvider,
 ): void {
-  app.get("/v1/security/:isin", async (context) => {
+  app.get("/security/:isin", async (context) => {
     const { isin } = context.req.param();
 
     try {
