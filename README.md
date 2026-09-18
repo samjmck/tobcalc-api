@@ -4,8 +4,8 @@ The goal of this API is to provide endpoints to fetch whatever information is ne
 
 Currently, the required information to be able to determine the TOB is:
 
-1. Exchange rates for a given currency and rate range from the ECB
-2. Security information (name, ISIN, accumulating/distributing...) 
+1. Exchange rates for a given currency and date range from the ECB
+2. Security information (name, ISIN, accumulating/distributing...) given an ISIN
 
 ## API design
 
